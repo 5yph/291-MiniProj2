@@ -1,6 +1,6 @@
 import subprocess
 import os
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING, TEXT
 
 
 def main():
@@ -43,10 +43,19 @@ def main():
     os.system("mongoimport --db 291db --port {} --collection dblp --file {}".format(port,jsonFile))
     print("Imported successfuly!")
 
+    print("Creating indices on title, authors, abstract, venue and year !")
+    article_collection.create_index([
+        ("title", TEXT),
+        ("authors", TEXT),
+        ("abstract", TEXT),
+        ("venue", TEXT),
+        ("year", TEXT)
+    ])
+    print("Created indices !")
 
-    results = article_collection.find({})
-    for rental in results:
-        print(rental)
+    # results = article_collection.find({})
+    # for rental in results:
+    #     print(rental)
 
 
 # For this part, you will write a program, named load-json with a proper extension (e.g. load-json.py if using Python), which will take a json file in the current directory and constructs a MongoDB collection. 
