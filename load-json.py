@@ -34,7 +34,7 @@ def main():
 
     # Create or open the collection in the db
     print("Creating collection 'dblp' ...")
-    this_collection = db["dblp"]
+    article_collection = db["dblp"]
     print("Collection created!")
 
 
@@ -44,7 +44,7 @@ def main():
     print("Imported successfuly!")
 
 
-    results = this_collection.find({})
+    results = article_collection.find({})
     for rental in results:
         print(rental)
 
