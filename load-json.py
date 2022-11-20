@@ -1,3 +1,5 @@
+import subprocess
+import os
 from pymongo import MongoClient
 
 
@@ -20,7 +22,7 @@ def main():
 
     print("Creating database '291db' ...")
     db = client["291db"]
-    print("Created databse!")
+    print("Created database!")
 
     # List collection names.
     collist = db.list_collection_names()
@@ -32,12 +34,20 @@ def main():
 
     # Create or open the collection in the db
     print("Creating collection 'dblp' ...")
-    movies_collection = db["dblp"]
+    this_collection = db["dblp"]
     print("Collection created!")
 
 
     print("Importing contents of ", jsonFile, " to the collection ...")
-    subprocess.run("mongoimport --db {} --collection {} --file {} --jsonArray".format("291db", "dblp", jsonFile))
+    # pr = subprocess.Popen(['mongoimport', '--db', '291db', '--collection', 'dblp', '--file', jsonFile, '--jsonArray'])
+    os.system("mongoimport --db 291db --port {} --collection dblp --file {}".format(port,jsonFile))
+    print("Imported successfuly!")
+
+
+    results = this_collection.find({})
+    for rental in results:
+        print(rental)
+
 
 # For this part, you will write a program, named load-json with a proper extension (e.g. load-json.py if using Python), which will take a json file in the current directory and constructs a MongoDB collection. 
 # Your program will take as input a json file name and a port number under which the MongoDB server is running, will connect to the server and will create a database named 291db (if it does not exist). Your program 
