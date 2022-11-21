@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 
 from searches import searchArticle
+from venues import listVenues
 
 def main():
 
@@ -39,6 +40,8 @@ def main():
         if (x == '2'):
             continue
         if (x == '3'):
+            n = input("Enter how many top venues you'd like to see!")
+            listVenues(article_collection, n)
             continue
 
         if (x == '4'):
