@@ -40,7 +40,7 @@ def main():
         if (x == '2'):
             continue
         if (x == '3'):
-            n = input("Enter how many top venues you'd like to see!")
+            n = input("Enter how many top venues you'd like to see!\n")
             listVenues(article_collection, n)
             continue
 

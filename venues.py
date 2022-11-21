@@ -7,8 +7,19 @@ def listVenues(collection, num):
     # get a count for each venue occurrence
     venue_count = collection.aggregate([{'$group':{'_id' : '$venue', 'count' : {'$sum' : 1}}}, {'$sort' : { 'count': -1 }}])
 
+    # display venues in proper order
+    count = 0
     for venue in venue_count:
+        # exclude empty venue
+        if venue['_id'] == '':
+            continue
+
+        # only print top n or less if doesn't exist
+        if count == int(num):
+            break
+            
         print(venue)
+        count += 1
 
     '''
     cursor = collection.find()
