@@ -52,7 +52,8 @@ def main():
         ("authors", TEXT),
         ("abstract", TEXT),
         ("venue", TEXT),
-        ("year", TEXT)
+        ("year", TEXT),
+        ("references", TEXT)
     ], default_language = "none")
     print("Created indices !")
 
