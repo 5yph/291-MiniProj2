@@ -1,4 +1,19 @@
+from pymongo import MongoClient
+
+from searches import searchArticle
+
 def main():
+
+    print("Enter a port number !")
+    port = int(input())
+
+    print("Connecting to MongoDB Server at port:" , port, " ...")
+    client = MongoClient('mongodb://localhost:{}'.format(port))
+    print("Connected!")
+
+    db = client["291db"]
+
+    article_collection = db["dblp"]
 
     print("")
     print("User Menu")
@@ -18,6 +33,8 @@ def main():
             print("Please put a valid input !")
             continue
         if (x == '1'):
+            y = input("Enter some space separated inputs yo !\n")
+            searchArticle(article_collection, y)
             continue
         if (x == '2'):
             continue

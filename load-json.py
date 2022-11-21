@@ -43,6 +43,9 @@ def main():
     os.system("mongoimport --db 291db --port {} --collection dblp --file {}".format(port,jsonFile))
     print("Imported successfuly!")
 
+    # set year to string for the text index
+    article_collection.update_many({}, [{"$set": {"year": {"$toString": "$year"}}}])
+
     print("Creating indices on title, authors, abstract, venue and year !")
     article_collection.create_index([
         ("title", TEXT),
@@ -50,7 +53,7 @@ def main():
         ("abstract", TEXT),
         ("venue", TEXT),
         ("year", TEXT)
-    ])
+    ], default_language = "none")
     print("Created indices !")
 
     # results = article_collection.find({})
