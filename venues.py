@@ -4,8 +4,10 @@ from pymongo import MongoClient
 def listVenues(collection, num):
     print("Listing top " + str(num) + " venues...")
 
-    # get a count for each venue occurrence
-    venue_count = collection.aggregate([{'$group':{'_id' : '$venue', 'count' : {'$sum' : 1}}}, {'$sort' : { 'count': -1 }}])
+    # get a count for each article occurence per venue
+    venue_count = collection.aggregate([{'$group':{'_id' : '$venue', 'article_count' : {'$sum' : 1}}}, {'$sort' : { 'article_count': -1 }}])
+
+    # find a way to get number of articles that reference paper per venue
 
     # display venues in proper order
     count = 0
