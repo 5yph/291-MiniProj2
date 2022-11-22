@@ -76,17 +76,22 @@ def searchAuthors(collection, keyword):
         resauthors = result["authors"]
         for resauthor in resauthors:
             temp = (resauthor.lower()).split()
-            if keyword in temp and resauthor not in authors:
-                
-                authors.append(resauthor)
-    print("")
+            if keyword.lower() in temp and resauthors not in authors:
+                authors.append(resauthors)
+    regex = ".*" + keyword + ".*"
+    subcursor = collection.aggregate([
+        {"$match": {"authors": {"$in": authors}}},
+        {"$project": { "_id": 0, "authors": 1 } },
+        {"$unwind": "$authors" },
+        {"$group" : {"_id": {"authors" : "$authors"}, "articles" : {"$sum" : 1} }},
+        {"$match": {"_id.authors": {"$regex": regex, "$options": "i"}}}
+    ])
+    print()
+    matches = list(subcursor)
     authcount = 1
-    for author in authors:
-        subcursor = collection.aggregate([{"$match": {"authors": author}}, {"$group" : {"_id": {"authors" : "$author"}, "articles" : {"$sum" : 1} }} ])
-        for result in subcursor:
-            print("Author #" + str(authcount) + ": " + author + " | Article Count: " + str(result["articles"]))
+    for match in matches:
+        print("Author #" + str(authcount) + ": " + match["_id"]["authors"] + " | Article Count: " + str(match["articles"]))
         authcount += 1
-    print("")
     if authors:
         while (1):
             x = input("Would you like to see the full details of an author ? ! ? (Y/N): ")
@@ -94,20 +99,19 @@ def searchAuthors(collection, keyword):
                 print("Oh well !")
                 break
             elif (x.lower() == 'y'):
-                y = input("Choose the author number from the list above (Not ID) !: ")
+                y = input("Type the author's full name with correct punctuation from the list (Not ID) !: ")
                 print("")
-                if (int(y) < 1 or int(y) > len(authors)):
-                    print("Bad article number!")
+                if (y == ""):
+                    print("Bad author name!")
                     continue
                 else:
-                    y2 = int(y) - 1
-                    author = authors[y2]
                     subcursor = collection.aggregate([
-                        {"$match": {"authors": author}},
+                        {"$match": {"authors": y}},
+                        {"$project": { "_id": 0, "authors": 1, "title": 1, "year": 1, "venue": 1 }},
                         {"$sort": {"year": -1}}
                     ])
                     returns = subcursor
-                    print(author + "'s Articles:")
+                    print(y + "'s Articles:")
                     for ret in returns:
                         if (ret["venue"] is not None):
                             print("\t" + ret["title"] + ', ' + ret["year"] + ' in ' + ret["venue"])

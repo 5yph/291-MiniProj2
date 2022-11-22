@@ -1,6 +1,7 @@
 import subprocess
 import os
 from pymongo import MongoClient, ASCENDING, TEXT
+import time
 
 
 def main():
@@ -37,7 +38,7 @@ def main():
     article_collection = db["dblp"]
     print("Collection created!")
 
-
+    start = time.time()
     print("Importing contents of ", jsonFile, " to the collection ...")
     # pr = subprocess.Popen(['mongoimport', '--db', '291db', '--collection', 'dblp', '--file', jsonFile, '--jsonArray'])
     os.system("mongoimport --db 291db --port {} --collection dblp --file {}".format(port,jsonFile))
@@ -54,8 +55,10 @@ def main():
         ("venue", TEXT),
         ("year", TEXT),
         ("references", TEXT)
-    ], default_language = "none")
+    ])#, default_language = "english")
     print("Created indices !")
+    end = time.time()
+    print("Time taken: " + str(end - start))
 
     # results = article_collection.find({})
     # for rental in results:
