@@ -109,7 +109,10 @@ def searchAuthors(collection, keyword):
                     returns = subcursor
                     print(author + "'s Articles:")
                     for ret in returns:
-                        print("\t" + ret["title"] + ', ' + ret["year"] + ' in ' + ret["venue"])
+                        if (ret["venue"] is not None):
+                            print("\t" + ret["title"] + ', ' + ret["year"] + ' in ' + ret["venue"])
+                        else:
+                            print("\t" + ret["title"] + ', ' + ret["year"])
                     print("")
 
 
