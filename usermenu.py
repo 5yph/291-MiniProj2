@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from searches import searchArticle
+from searches import searchArticle, searchAuthors
 
 def main():
 
@@ -34,9 +34,17 @@ def main():
             continue
         if (x == '1'):
             y = input("Enter some space separated inputs yo !\n")
+            if (y == ""):
+                print("Bad input !")
+                continue
             searchArticle(article_collection, y)
             continue
         if (x == '2'):
+            y = input("Enter some space separated input yo !\n")
+            if (y == ""):
+                print("Bad input !")
+                continue
+            searchAuthors(article_collection, y)            
             continue
         if (x == '3'):
             continue
