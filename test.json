@@ -1,0 +1,5 @@
+{"abstract": "Article 1 abstract.", "authors": ["Sample"], "n_citation": 0, "references": ["a2", "a3"], "title": "Article 1", "venue": "v1", "year": 2000, "id": "a1"}
+{"abstract": "Article 2 abstract.", "authors": ["Sample"], "n_citation": 0, "references": ["a3", "a4"], "title": "Article 2", "venue": "v1", "year": 2000, "id": "a2"}
+{"abstract": "Article 3 abstract.", "authors": ["Sample"], "n_citation": 0, "references": ["a5"], "title": "Article 3", "venue": "v2", "year": 2000, "id": "a3"}
+{"abstract": "Article 4 abstract.", "authors": ["Sample"], "n_citation": 0, "references": ["a6"], "title": "Article 4", "venue": "v3", "year": 2000, "id": "a4"}
+{"abstract": "Article 5 abstract.", "authors": ["Sample"], "n_citation": 0, "references": [], "title": "Article 5", "venue": "", "year": 2000, "id": "a5"}
