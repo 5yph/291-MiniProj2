@@ -6,7 +6,7 @@ def listVenues(collection, num):
     print("Listing top " + str(num) + " venues...")
 
     # basic grouping by venue, gets article count
-    venue_article_count = collection.aggregate([{'$match': {'venue': {'$not': re.compile('^(?![\s\S])')}}}, {'$group':{'_id' : '$venue', 'article_count' : {'$sum' : 1}}}, {'$sort' : { 'article_count': -1 }}])
+    venue_article_count = collection.aggregate([{'$match': {'venue': {'$not': re.compile('^(?![\s\S])')}}}, {'$group':{'_id' : '$venue', 'article_count' : {'$sum' : 1}}}])
     venue_article_count = list(venue_article_count)
     
 
@@ -33,6 +33,7 @@ def listVenues(collection, num):
         venue_info_cursor = collection.find({"venue": venue_name})
 
         articles = [] # array that will store all articles from this venue
+        ref_articles = set() # unique set that tracks which articles reference this venue
 
         # debug printing
         # iterate over each item in the venue_info
@@ -53,10 +54,17 @@ def listVenues(collection, num):
             for reference_info in reference_to_this_article_cursor:
 
                 # we can avoid double-counting here by perhaps having a set
-                # and ensuring that the same article is not included twice?
+                # and ensuring that the same article is not included twice
 
-                print(article + " is referenced by: " + str(reference_info['id']))
-                reference_count += 1
+                aid = str(reference_info['id'])
+
+                print(article + " is referenced by: " + aid)
+
+                # only count distinct
+                if aid not in ref_articles:
+                    reference_count += 1
+                    ref_articles.add(aid)
+                    
             print("total references to this article: " + str(reference_count))
             total_reference_count += reference_count
 
@@ -86,6 +94,11 @@ def listVenues(collection, num):
     # sort by references per venue
     sorted_combined_list = sorted(combined_list, key=lambda x:x[1], reverse=True)
     print("printing sorted combined list...")
+
+    count = 0 # only print out how many the user wants
     for sorted_item in sorted_combined_list:
-        print(sorted_item)
+        print("Venue: " + sorted_item[0]['_id'] + " | Article count: " + str(sorted_item[0]['article_count']) + " | Referenced count: " + str(sorted_item[1]))
+        count += 1
+        if count == int(num):
+            break
     
