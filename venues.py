@@ -23,6 +23,12 @@ def listVenues(collection, num):
         else:
             vid = ""
 
+        # populate our venue dictionary
+        if vid in venue_to_articles:
+            venue_to_articles[vid].append(aid)
+        else:
+            venue_to_articles[vid] = [aid]
+
         # store this id in the dictionary if not existing
         if aid not in referenced_by:
             referenced_by[aid] = []
@@ -40,12 +46,6 @@ def listVenues(collection, num):
                 referenced_by[reference].append(aid)
             else:
                 referenced_by[reference] = [aid]
-
-        # populate our venue dictionary
-        if vid in venue_to_articles:
-            venue_to_articles[vid].append(aid)
-        else:
-            venue_to_articles[vid] = [aid]
 
     # basic grouping by venue, gets article count
     venue_article_count = collection.aggregate([{'$match': {'venue': {'$not': re.compile('^(?![\s\S])')}}}, {'$group':{'_id' : '$venue', 'article_count' : {'$sum' : 1}}}])
