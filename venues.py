@@ -8,16 +8,36 @@ def listVenues(collection, num):
 
     start = time.time()
 
+    # build a hashmap where key : article, value : every other article that references key
+    referenced_by = {}
+
+    for article in collection.find():
+
+        aid = article['id']
+
+        # store this id in the dictionary if not existing
+        if aid not in referenced_by:
+            referenced_by[aid] = []
+
+        # then check all of this articles references
+        if 'references' in article:
+            references = article['references']
+        else:
+            continue
+
+        # populate our dictionary
+        for reference in references:
+            # make it so that the referenced article knows our current article references it
+            if reference in referenced_by:
+                referenced_by[reference].append(aid)
+            else:
+                referenced_by[reference] = [aid]
+
     # basic grouping by venue, gets article count
     venue_article_count = collection.aggregate([{'$match': {'venue': {'$not': re.compile('^(?![\s\S])')}}}, {'$group':{'_id' : '$venue', 'article_count' : {'$sum' : 1}}}])
     venue_article_count = list(venue_article_count)
-    
 
     venue_copy = venue_article_count
-    # venue_copy.remove('')
-
-    # get the references per each venue
-    # count = 0 
 
     # maintain a list of the same size as venue
     # this list will have the number of total references per venue, to be used for sorting
@@ -51,17 +71,16 @@ def listVenues(collection, num):
         for article in articles:
             reference_count = 0 # total references to this particular article
 
-        #    print("iterating over article: " + article + " in venue " + venue_info['venue'])
-            reference_to_this_article_cursor = collection.find({"references": article})
+            # print("iterating over article: " + article + " in venue " + venue_info['venue'])
+            # get all references to this particular article
+            references = referenced_by[article]
 
-            for reference_info in reference_to_this_article_cursor:
+            for aid in references:
 
                 # we can avoid double-counting here by perhaps having a set
                 # and ensuring that the same article is not included twice
 
-                aid = str(reference_info['id'])
-
-            #    print(article + " is referenced by: " + aid)
+                # print(article + " is referenced by: " + aid)
 
                 # only count distinct
                 if aid not in ref_articles:
