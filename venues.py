@@ -11,9 +11,17 @@ def listVenues(collection, num):
     # build a hashmap where key : article, value : every other article that references key
     referenced_by = {}
 
+    # build another hashmap where key : venue, value : all articles of that venue
+    venue_to_articles = {}
+
     for article in collection.find():
 
         aid = article['id']
+
+        if 'venue' in article:
+            vid = article['venue']
+        else:
+            vid = ""
 
         # store this id in the dictionary if not existing
         if aid not in referenced_by:
@@ -25,13 +33,19 @@ def listVenues(collection, num):
         else:
             continue
 
-        # populate our dictionary
+        # populate our references dictionary
         for reference in references:
             # make it so that the referenced article knows our current article references it
             if reference in referenced_by:
                 referenced_by[reference].append(aid)
             else:
                 referenced_by[reference] = [aid]
+
+        # populate our venue dictionary
+        if vid in venue_to_articles:
+            venue_to_articles[vid].append(aid)
+        else:
+            venue_to_articles[vid] = [aid]
 
     # basic grouping by venue, gets article count
     venue_article_count = collection.aggregate([{'$match': {'venue': {'$not': re.compile('^(?![\s\S])')}}}, {'$group':{'_id' : '$venue', 'article_count' : {'$sum' : 1}}}])
@@ -53,16 +67,17 @@ def listVenues(collection, num):
 
         # get the other info of that venue
         venue_name = venue['_id']
-        venue_info_cursor = collection.find({"venue": venue_name})
+        articles = venue_to_articles[venue_name]
+        # venue_info_cursor = collection.find({"venue": venue_name})
 
-        articles = [] # array that will store all articles from this venue
+        # articles = [] # array that will store all articles from this venue
         ref_articles = set() # unique set that tracks which articles reference this venue
 
         # debug printing
         # iterate over each item in the venue_info
         # basically iterate over each article in this venue
-        for venue_info in venue_info_cursor:
-            articles.append(venue_info['id'])
+        # for venue_info in venue_info_cursor:
+        #     articles.append(venue_info['id'])
         
         # print("venue and article ids: " + venue_info['venue'] + ' ' + str(articles))
 
