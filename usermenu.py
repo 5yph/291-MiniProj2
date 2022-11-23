@@ -73,12 +73,12 @@ def uMenu(collection):
                     break
 
             while (1):
-                authors = input("Give a list of authors (space seperated): ")
+                authors = input("Give a list of authors (comma seperated): ")
                 if authors == "" or authors.isspace():
                     print("Please give a list of authors.")
                     continue
                 else:
-                    authors = authors.split()
+                    authors = authors.split(",")
                     break
 
             while (1):

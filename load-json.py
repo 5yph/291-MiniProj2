@@ -1,5 +1,6 @@
 import subprocess
 import os
+import time
 from usermenu import uMenu
 from pymongo import MongoClient, ASCENDING, TEXT
 
@@ -21,7 +22,7 @@ def createCollection():
         port = int(splitInput[1])
 
         print("Connecting to MongoDB server at port:" , port, " ...")
-
+        start = time.time()
         try:
             client = MongoClient('mongodb://localhost:{}'.format(port))
         except: 
@@ -61,8 +62,11 @@ def createCollection():
         
         print("Importing contents of ", jsonFile, " to the collection ...")
         # pr = subprocess.Popen(['mongoimport', '--db', '291db', '--collection', 'dblp', '--file', jsonFile, '--jsonArray'])
-        os.system("mongoimport --db 291db --port {} --collection dblp --file {} --drop".format(port,jsonFile))
+        os.system("mongoimport --db 291db --port {} --collection dblp --file {}".format(port,jsonFile))
         print("Imported successfuly!")
+
+        print("Dropping old indexs ...")
+        article_collection.drop_indexes()
 
         print("Setting all years in entries to string ...")
         # set year to string for the text index
@@ -78,6 +82,10 @@ def createCollection():
             ("references", TEXT)
         ], default_language = "none")
         print("Created indices !")
+
+        end = time.time()
+
+        print(end - start)
 
         return article_collection
 
