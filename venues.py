@@ -1,9 +1,12 @@
 import os
 from pymongo import MongoClient
 import re
+import time
 
 def listVenues(collection, num):
     print("Listing top " + str(num) + " venues...")
+
+    start = time.time()
 
     # basic grouping by venue, gets article count
     venue_article_count = collection.aggregate([{'$match': {'venue': {'$not': re.compile('^(?![\s\S])')}}}, {'$group':{'_id' : '$venue', 'article_count' : {'$sum' : 1}}}])
@@ -19,14 +22,14 @@ def listVenues(collection, num):
     # maintain a list of the same size as venue
     # this list will have the number of total references per venue, to be used for sorting
     total_references = [0] * len(venue_copy)
-    print("length of list: " + str(len(venue_copy)))
+    # print("length of list: " + str(len(venue_copy)))
     # for each distinct venue
     for i, venue in enumerate(venue_article_count):
         if venue['_id'] == '':
             continue
 
         # print whole thing for debugging
-        print(venue)
+        # print(venue)
 
         # get the other info of that venue
         venue_name = venue['_id']
@@ -41,14 +44,14 @@ def listVenues(collection, num):
         for venue_info in venue_info_cursor:
             articles.append(venue_info['id'])
         
-        print("venue and article ids: " + venue_info['venue'] + ' ' + str(articles))
+        # print("venue and article ids: " + venue_info['venue'] + ' ' + str(articles))
 
         # for each article, count how many others reference it
         total_reference_count = 0 # total references to venue
         for article in articles:
             reference_count = 0 # total references to this particular article
 
-            print("iterating over article: " + article + " in venue " + venue_info['venue'])
+        #    print("iterating over article: " + article + " in venue " + venue_info['venue'])
             reference_to_this_article_cursor = collection.find({"references": article})
 
             for reference_info in reference_to_this_article_cursor:
@@ -58,19 +61,19 @@ def listVenues(collection, num):
 
                 aid = str(reference_info['id'])
 
-                print(article + " is referenced by: " + aid)
+            #    print(article + " is referenced by: " + aid)
 
                 # only count distinct
                 if aid not in ref_articles:
                     reference_count += 1
                     ref_articles.add(aid)
-                    
-            print("total references to this article: " + str(reference_count))
+
+            # print("total references to this article: " + str(reference_count))
             total_reference_count += reference_count
 
-        print("total references to venue " + venue_info['venue'] + ": " + str(total_reference_count))
-        print("adding " + str(total_reference_count) + " to index " + str(i))
-        print("")
+        # print("total references to venue " + venue_info['venue'] + ": " + str(total_reference_count))
+        # print("adding " + str(total_reference_count) + " to index " + str(i))
+        # print("")
         total_references[i] = total_reference_count
 
         # if count == int(num):
@@ -78,13 +81,13 @@ def listVenues(collection, num):
             
         #count += 1
 
-    print("Printing total reference count list")
-    print(total_references)
+    # print("Printing total reference count list")
+    # print(total_references)
 
-    print("Printing copy...")
-    for venue in venue_copy:
-        print(venue)
-        print(venue['_id'])
+    # print("Printing copy...")
+    # for venue in venue_copy:
+    #     print(venue)
+    #     print(venue['_id'])
 
     combined_list = zip(venue_copy, total_references)
     # print("printing combined list...")
@@ -93,7 +96,7 @@ def listVenues(collection, num):
 
     # sort by references per venue
     sorted_combined_list = sorted(combined_list, key=lambda x:x[1], reverse=True)
-    print("printing sorted combined list...")
+    # print("printing sorted combined list...")
 
     count = 0 # only print out how many the user wants
     for sorted_item in sorted_combined_list:
@@ -102,3 +105,5 @@ def listVenues(collection, num):
         if count == int(num):
             break
     
+    end = time.time()
+    print(str(end - start))
