@@ -1,7 +1,6 @@
 import subprocess
 import os
 import time
-from usermenu import uMenu
 from pymongo import MongoClient, ASCENDING, TEXT
 
 
@@ -87,7 +86,7 @@ def main():
 
         print(end - start)
 
-        return article_collection
+        break
 
 if __name__ == "__main__":
     main()
