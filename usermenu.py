@@ -6,10 +6,17 @@ from venues import listVenues
 
 
 
-def uMenu(collection):
-    # client = MongoClient('mongodb://localhost:{}'.format(20202))
-    # db = client["291db"]
-    # collection = db["dblp"]
+def main():
+    print("Enter a port number !")
+    port = int(input())
+
+    print("Connecting to MongoDB Server at port:" , port, " ...")
+    client = MongoClient('mongodb://localhost:{}'.format(port))
+    print("Connected!")
+
+    db = client["291db"]
+
+    collection = db["dblp"]
     print("")
     print("User Menu")
     print("---------")
@@ -101,8 +108,8 @@ def uMenu(collection):
             print("Exiting ...")
             break
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
 # Add an article The user should be able to add an article to the collection by providing a unique id, a title, a list of authors, and a year. The fields abstract and venue should be set to null, references should 
 # be set to an empty array and n_citations should be set to zero. 
